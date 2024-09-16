@@ -1,0 +1,1374 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "11d12428-d982-41d2-a29b-effd370561c8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Import Libraries\n",
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import os\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "80f3b0c6-5aa9-445b-a256-e39867f6672f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Import Dataframes df_prods, df_ords\n",
+    "path=r'C:\\Users\\north\\08-2024 Instacart Basket Analysis'\n",
+    "df_prods=pd.read_csv(os.path.join(path, '02 Data', 'Original Data', 'products.csv'), index_col=False)\n",
+    "df_ords= pd.read_csv(os.path.join(path, '02 Data', 'Prepared Data', 'orders_wrangled.csv'), index_col=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "1fc149d6-0b1a-4b71-9507-8c3641a2903f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create a dataframe"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "e3521976-32d0-4a6b-a300-c39235bbea37",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_test = pd.DataFrame()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "ec95674c-2dcb-41f4-ae5a-85d36490631a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>mix</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>a</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>b</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>True</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    mix\n",
+       "0     a\n",
+       "1     b\n",
+       "2     1\n",
+       "3  True"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Create a mixed type column\n",
+    "df_test ['mix'] = ['a','b',1,True]\n",
+    "df_test.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "90619fb2-e803-4e23-a41e-044f6ee6182e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "mix\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\north\\AppData\\Local\\Temp\\ipykernel_4004\\522087711.py:3: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.\n",
+      "  weird = (df_test[[col]].applymap(type) != df_test[[col]].iloc[0].apply(type)).any(axis = 1)\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Check for mixed types\n",
+    "for col in df_test.columns.tolist():\n",
+    "  weird = (df_test[[col]].applymap(type) != df_test[[col]].iloc[0].apply(type)).any(axis = 1)\n",
+    "  if len (df_test[weird]) > 0:\n",
+    "    print (col)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "297b76c8-53f8-4267-a096-afb22da2a37c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_test['mix'] = df_test['mix'].astype('str')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "721c5531-4130-4340-bba3-016fff82a313",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Check missing values in df_prods"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "135d7b86-eb53-4694-a5ec-45916cded015",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "product_id        0\n",
+       "product_name     16\n",
+       "aisle_id          0\n",
+       "department_id     0\n",
+       "prices            0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_prods.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "e7428263-97bb-4f4b-96d2-e7b51ecd047a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create new dataframe df_nan\n",
+    "df_nan=df_prods[df_prods['product_name'].isnull()==True]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "id": "5b56e2f1-80b4-44be-9e31-ab32cf2d3b57",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>product_id</th>\n",
+       "      <th>product_name</th>\n",
+       "      <th>aisle_id</th>\n",
+       "      <th>department_id</th>\n",
+       "      <th>prices</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>33</th>\n",
+       "      <td>34</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>121</td>\n",
+       "      <td>14</td>\n",
+       "      <td>12.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>68</th>\n",
+       "      <td>69</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>26</td>\n",
+       "      <td>7</td>\n",
+       "      <td>11.8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>115</th>\n",
+       "      <td>116</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>93</td>\n",
+       "      <td>3</td>\n",
+       "      <td>10.8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>261</th>\n",
+       "      <td>262</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>110</td>\n",
+       "      <td>13</td>\n",
+       "      <td>12.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>525</th>\n",
+       "      <td>525</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>109</td>\n",
+       "      <td>11</td>\n",
+       "      <td>1.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1511</th>\n",
+       "      <td>1511</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>84</td>\n",
+       "      <td>16</td>\n",
+       "      <td>14.3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1780</th>\n",
+       "      <td>1780</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>126</td>\n",
+       "      <td>11</td>\n",
+       "      <td>12.3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2240</th>\n",
+       "      <td>2240</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>52</td>\n",
+       "      <td>1</td>\n",
+       "      <td>14.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2586</th>\n",
+       "      <td>2586</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>104</td>\n",
+       "      <td>13</td>\n",
+       "      <td>12.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3159</th>\n",
+       "      <td>3159</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>126</td>\n",
+       "      <td>11</td>\n",
+       "      <td>13.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3230</th>\n",
+       "      <td>3230</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>120</td>\n",
+       "      <td>16</td>\n",
+       "      <td>14.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3736</th>\n",
+       "      <td>3736</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>41</td>\n",
+       "      <td>8</td>\n",
+       "      <td>14.8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4283</th>\n",
+       "      <td>4283</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>77</td>\n",
+       "      <td>7</td>\n",
+       "      <td>14.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4790</th>\n",
+       "      <td>4790</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>91</td>\n",
+       "      <td>16</td>\n",
+       "      <td>14.5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>38187</th>\n",
+       "      <td>38183</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>39</td>\n",
+       "      <td>12</td>\n",
+       "      <td>20.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>40444</th>\n",
+       "      <td>40440</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>120</td>\n",
+       "      <td>16</td>\n",
+       "      <td>14.8</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       product_id product_name  aisle_id  department_id  prices\n",
+       "33             34          NaN       121             14    12.2\n",
+       "68             69          NaN        26              7    11.8\n",
+       "115           116          NaN        93              3    10.8\n",
+       "261           262          NaN       110             13    12.1\n",
+       "525           525          NaN       109             11     1.2\n",
+       "1511         1511          NaN        84             16    14.3\n",
+       "1780         1780          NaN       126             11    12.3\n",
+       "2240         2240          NaN        52              1    14.2\n",
+       "2586         2586          NaN       104             13    12.4\n",
+       "3159         3159          NaN       126             11    13.1\n",
+       "3230         3230          NaN       120             16    14.4\n",
+       "3736         3736          NaN        41              8    14.8\n",
+       "4283         4283          NaN        77              7    14.4\n",
+       "4790         4790          NaN        91             16    14.5\n",
+       "38187       38183          NaN        39             12    20.9\n",
+       "40444       40440          NaN       120             16    14.8"
+      ]
+     },
+     "execution_count": 37,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_nan"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "id": "7f4259a9-e0bf-4c28-badf-8baf5c8a025b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(49693, 5)"
+      ]
+     },
+     "execution_count": 45,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_prods.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "id": "a4061123-b973-41f1-b657-9281525394d8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create new dataframe df_prods_clean\n",
+    "df_prods_clean=df_prods[df_prods['product_name'].isnull()==False]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "id": "e6ecba26-dc23-4adc-b6be-bd2448fae9c4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(49677, 5)"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_prods_clean.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "id": "2b7ceafb-2216-4436-a043-0f93277a2607",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Finding duplicates\n",
+    "df_dups = df_prods_clean[df_prods_clean.duplicated()]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "id": "de1f8d17-1b76-40b3-888a-d40cd1da96fe",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>product_id</th>\n",
+       "      <th>product_name</th>\n",
+       "      <th>aisle_id</th>\n",
+       "      <th>department_id</th>\n",
+       "      <th>prices</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>462</th>\n",
+       "      <td>462</td>\n",
+       "      <td>Fiber 4g Gummy Dietary Supplement</td>\n",
+       "      <td>70</td>\n",
+       "      <td>11</td>\n",
+       "      <td>4.8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>18459</th>\n",
+       "      <td>18458</td>\n",
+       "      <td>Ranger IPA</td>\n",
+       "      <td>27</td>\n",
+       "      <td>5</td>\n",
+       "      <td>9.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>26810</th>\n",
+       "      <td>26808</td>\n",
+       "      <td>Black House Coffee Roasty Stout Beer</td>\n",
+       "      <td>27</td>\n",
+       "      <td>5</td>\n",
+       "      <td>13.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>35309</th>\n",
+       "      <td>35306</td>\n",
+       "      <td>Gluten Free Organic Peanut Butter &amp; Chocolate ...</td>\n",
+       "      <td>121</td>\n",
+       "      <td>14</td>\n",
+       "      <td>6.8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>35495</th>\n",
+       "      <td>35491</td>\n",
+       "      <td>Adore Forever Body Wash</td>\n",
+       "      <td>127</td>\n",
+       "      <td>11</td>\n",
+       "      <td>9.9</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       product_id                                       product_name  \\\n",
+       "462           462                  Fiber 4g Gummy Dietary Supplement   \n",
+       "18459       18458                                         Ranger IPA   \n",
+       "26810       26808               Black House Coffee Roasty Stout Beer   \n",
+       "35309       35306  Gluten Free Organic Peanut Butter & Chocolate ...   \n",
+       "35495       35491                            Adore Forever Body Wash   \n",
+       "\n",
+       "       aisle_id  department_id  prices  \n",
+       "462          70             11     4.8  \n",
+       "18459        27              5     9.2  \n",
+       "26810        27              5    13.4  \n",
+       "35309       121             14     6.8  \n",
+       "35495       127             11     9.9  "
+      ]
+     },
+     "execution_count": 57,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_dups"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "id": "01555b1c-2ffa-4bfe-a877-3d88c1105213",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(49677, 5)"
+      ]
+     },
+     "execution_count": 59,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_prods_clean.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "id": "e8b6edab-8937-4622-98d1-15611b07d64d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Drop Duplicates\n",
+    "df_prods_clean_no_dups = df_prods_clean.drop_duplicates()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "id": "7571d883-7fda-4aaf-b251-ffa4943d3784",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(49672, 5)"
+      ]
+     },
+     "execution_count": 65,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_prods_clean_no_dups.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "id": "21ba44d8-ae1c-47ed-b023-6dd90b82fd0a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_prods_clean_no_dups.to_csv(os.path.join(path, '02 Data','Prepared Data', 'products_checked.csv'))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "22b46560-6cac-468d-b6cc-9cf744956215",
+   "metadata": {},
+   "source": [
+    "###**Answers Exercise 4.5**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "id": "ee78ab1f-a776-4331-801a-c5ba9375483f",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Unnamed: 0</th>\n",
+       "      <th>order_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>order_number</th>\n",
+       "      <th>order_weekday</th>\n",
+       "      <th>order_hour_of_day</th>\n",
+       "      <th>days_since_prior_order</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.214874e+06</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>1.710541e+06</td>\n",
+       "      <td>1.710542e+06</td>\n",
+       "      <td>1.029782e+05</td>\n",
+       "      <td>1.715486e+01</td>\n",
+       "      <td>2.776219e+00</td>\n",
+       "      <td>1.345202e+01</td>\n",
+       "      <td>1.111484e+01</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>9.875817e+05</td>\n",
+       "      <td>9.875817e+05</td>\n",
+       "      <td>5.953372e+04</td>\n",
+       "      <td>1.773316e+01</td>\n",
+       "      <td>2.046829e+00</td>\n",
+       "      <td>4.226088e+00</td>\n",
+       "      <td>9.206737e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>8.552705e+05</td>\n",
+       "      <td>8.552715e+05</td>\n",
+       "      <td>5.139400e+04</td>\n",
+       "      <td>5.000000e+00</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>1.000000e+01</td>\n",
+       "      <td>4.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>1.710541e+06</td>\n",
+       "      <td>1.710542e+06</td>\n",
+       "      <td>1.026890e+05</td>\n",
+       "      <td>1.100000e+01</td>\n",
+       "      <td>3.000000e+00</td>\n",
+       "      <td>1.300000e+01</td>\n",
+       "      <td>7.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>2.565812e+06</td>\n",
+       "      <td>2.565812e+06</td>\n",
+       "      <td>1.543850e+05</td>\n",
+       "      <td>2.300000e+01</td>\n",
+       "      <td>5.000000e+00</td>\n",
+       "      <td>1.600000e+01</td>\n",
+       "      <td>1.500000e+01</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>3.421082e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>2.062090e+05</td>\n",
+       "      <td>1.000000e+02</td>\n",
+       "      <td>6.000000e+00</td>\n",
+       "      <td>2.300000e+01</td>\n",
+       "      <td>3.000000e+01</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         Unnamed: 0      order_id       user_id  order_number  order_weekday  \\\n",
+       "count  3.421083e+06  3.421083e+06  3.421083e+06  3.421083e+06   3.421083e+06   \n",
+       "mean   1.710541e+06  1.710542e+06  1.029782e+05  1.715486e+01   2.776219e+00   \n",
+       "std    9.875817e+05  9.875817e+05  5.953372e+04  1.773316e+01   2.046829e+00   \n",
+       "min    0.000000e+00  1.000000e+00  1.000000e+00  1.000000e+00   0.000000e+00   \n",
+       "25%    8.552705e+05  8.552715e+05  5.139400e+04  5.000000e+00   1.000000e+00   \n",
+       "50%    1.710541e+06  1.710542e+06  1.026890e+05  1.100000e+01   3.000000e+00   \n",
+       "75%    2.565812e+06  2.565812e+06  1.543850e+05  2.300000e+01   5.000000e+00   \n",
+       "max    3.421082e+06  3.421083e+06  2.062090e+05  1.000000e+02   6.000000e+00   \n",
+       "\n",
+       "       order_hour_of_day  days_since_prior_order  \n",
+       "count       3.421083e+06            3.214874e+06  \n",
+       "mean        1.345202e+01            1.111484e+01  \n",
+       "std         4.226088e+00            9.206737e+00  \n",
+       "min         0.000000e+00            0.000000e+00  \n",
+       "25%         1.000000e+01            4.000000e+00  \n",
+       "50%         1.300000e+01            7.000000e+00  \n",
+       "75%         1.600000e+01            1.500000e+01  \n",
+       "max         2.300000e+01            3.000000e+01  "
+      ]
+     },
+     "execution_count": 72,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##02. Data Consistency Check on 'df_ords'\n",
+    "df_ords.describe()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "24cb3d48-4ea3-4e89-9e87-1b20b6cebaf5",
+   "metadata": {},
+   "source": [
+    "#**02. Answer**\n",
+    "\n",
+    "-order_number:\n",
+    "Max Value: 100\n",
+    "Recommendation: Verify whether a maximum of 100 orders per user is expected or if this indicates a potential data issue.\n",
+    "\n",
+    "-order_weekday:\n",
+    "Max Value: 6\n",
+    "Recommendation: Confirm that the day numbering aligns with the intended mapping (e.g., 0 for Sunday, 6 for Saturday).\n",
+    "\n",
+    "-order_hour_of_day:\n",
+    "Min/Max Values: 0 / 23\n",
+    "Recommendation: No issues identified; the values are within the expected 24-hour range.\n",
+    "\n",
+    "-days_since_prior_order:\n",
+    "Max Value: 30\n",
+    "Recommendation: Check if 30 represents a valid value (e.g., a cutoff for long intervals) or if it indicates a data handling issue.\n",
+    "\n",
+    "-Unnamed: 0:\n",
+    "Observation: Likely an unnecessary index column.\n",
+    "Recommendation: Drop this column"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "id": "bb35b5a2-0869-4dd1-8f7d-523dd7f38d1c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Drop Column \"Unnamed:0\"\n",
+    "df_ords.drop(columns=['Unnamed: 0'], inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "id": "8e2296a8-27aa-4602-95d9-91e11f14e479",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>order_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>order_number</th>\n",
+       "      <th>order_weekday</th>\n",
+       "      <th>order_hour_of_day</th>\n",
+       "      <th>days_since_prior_order</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>3.214874e+06</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>1.710542e+06</td>\n",
+       "      <td>1.029782e+05</td>\n",
+       "      <td>1.715486e+01</td>\n",
+       "      <td>2.776219e+00</td>\n",
+       "      <td>1.345202e+01</td>\n",
+       "      <td>1.111484e+01</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>9.875817e+05</td>\n",
+       "      <td>5.953372e+04</td>\n",
+       "      <td>1.773316e+01</td>\n",
+       "      <td>2.046829e+00</td>\n",
+       "      <td>4.226088e+00</td>\n",
+       "      <td>9.206737e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "      <td>0.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>8.552715e+05</td>\n",
+       "      <td>5.139400e+04</td>\n",
+       "      <td>5.000000e+00</td>\n",
+       "      <td>1.000000e+00</td>\n",
+       "      <td>1.000000e+01</td>\n",
+       "      <td>4.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>1.710542e+06</td>\n",
+       "      <td>1.026890e+05</td>\n",
+       "      <td>1.100000e+01</td>\n",
+       "      <td>3.000000e+00</td>\n",
+       "      <td>1.300000e+01</td>\n",
+       "      <td>7.000000e+00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>2.565812e+06</td>\n",
+       "      <td>1.543850e+05</td>\n",
+       "      <td>2.300000e+01</td>\n",
+       "      <td>5.000000e+00</td>\n",
+       "      <td>1.600000e+01</td>\n",
+       "      <td>1.500000e+01</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>3.421083e+06</td>\n",
+       "      <td>2.062090e+05</td>\n",
+       "      <td>1.000000e+02</td>\n",
+       "      <td>6.000000e+00</td>\n",
+       "      <td>2.300000e+01</td>\n",
+       "      <td>3.000000e+01</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "           order_id       user_id  order_number  order_weekday  \\\n",
+       "count  3.421083e+06  3.421083e+06  3.421083e+06   3.421083e+06   \n",
+       "mean   1.710542e+06  1.029782e+05  1.715486e+01   2.776219e+00   \n",
+       "std    9.875817e+05  5.953372e+04  1.773316e+01   2.046829e+00   \n",
+       "min    1.000000e+00  1.000000e+00  1.000000e+00   0.000000e+00   \n",
+       "25%    8.552715e+05  5.139400e+04  5.000000e+00   1.000000e+00   \n",
+       "50%    1.710542e+06  1.026890e+05  1.100000e+01   3.000000e+00   \n",
+       "75%    2.565812e+06  1.543850e+05  2.300000e+01   5.000000e+00   \n",
+       "max    3.421083e+06  2.062090e+05  1.000000e+02   6.000000e+00   \n",
+       "\n",
+       "       order_hour_of_day  days_since_prior_order  \n",
+       "count       3.421083e+06            3.214874e+06  \n",
+       "mean        1.345202e+01            1.111484e+01  \n",
+       "std         4.226088e+00            9.206737e+00  \n",
+       "min         0.000000e+00            0.000000e+00  \n",
+       "25%         1.000000e+01            4.000000e+00  \n",
+       "50%         1.300000e+01            7.000000e+00  \n",
+       "75%         1.600000e+01            1.500000e+01  \n",
+       "max         2.300000e+01            3.000000e+01  "
+      ]
+     },
+     "execution_count": 81,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_ords.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 85,
+   "id": "4293ea99-142a-4550-aa60-b1c35577670b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "C:\\Users\\north\\AppData\\Local\\Temp\\ipykernel_4004\\4222981843.py:3: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.\n",
+      "  weird = (df_ords[[col]].applymap(type) != df_ords[[col]].iloc[0].apply(type)).any(axis = 1)\n",
+      "C:\\Users\\north\\AppData\\Local\\Temp\\ipykernel_4004\\4222981843.py:3: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.\n",
+      "  weird = (df_ords[[col]].applymap(type) != df_ords[[col]].iloc[0].apply(type)).any(axis = 1)\n",
+      "C:\\Users\\north\\AppData\\Local\\Temp\\ipykernel_4004\\4222981843.py:3: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.\n",
+      "  weird = (df_ords[[col]].applymap(type) != df_ords[[col]].iloc[0].apply(type)).any(axis = 1)\n",
+      "C:\\Users\\north\\AppData\\Local\\Temp\\ipykernel_4004\\4222981843.py:3: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.\n",
+      "  weird = (df_ords[[col]].applymap(type) != df_ords[[col]].iloc[0].apply(type)).any(axis = 1)\n",
+      "C:\\Users\\north\\AppData\\Local\\Temp\\ipykernel_4004\\4222981843.py:3: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.\n",
+      "  weird = (df_ords[[col]].applymap(type) != df_ords[[col]].iloc[0].apply(type)).any(axis = 1)\n",
+      "C:\\Users\\north\\AppData\\Local\\Temp\\ipykernel_4004\\4222981843.py:3: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.\n",
+      "  weird = (df_ords[[col]].applymap(type) != df_ords[[col]].iloc[0].apply(type)).any(axis = 1)\n"
+     ]
+    }
+   ],
+   "source": [
+    "##03. Check for mixed-type data\n",
+    "for col in df_ords.columns.tolist():\n",
+    "  weird = (df_ords[[col]].applymap(type) != df_ords[[col]].iloc[0].apply(type)).any(axis = 1)\n",
+    "  if len (df_ords[weird]) > 0:\n",
+    "    print (col)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 94,
+   "id": "9e77006c-3cb8-4df3-98e9-db8d45a59343",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "order_id                       0\n",
+       "user_id                        0\n",
+       "order_number                   0\n",
+       "order_weekday                  0\n",
+       "order_hour_of_day              0\n",
+       "days_since_prior_order    206209\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 94,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##05. Check Missing Values\n",
+    "df_ords.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6f7168e9-7706-4811-a959-9fd3843d43a9",
+   "metadata": {},
+   "source": [
+    "#**05. Answer**\n",
+    "\n",
+    "The missing values are found exclusively in the days_since_prior_order column, which has 206,209 missing entries. This column likely represents the number of days since a user's previous order.\n",
+    "\n",
+    "**-** A plausible explanation for these missing values could be:\n",
+    "**First-Time Orders:** The missing values might correspond to the first order made by a user. Since there is no prior order to calculate the difference, the value is naturally missing or undefined for such cases.\n",
+    "\n",
+    "**-** Recommendations\n",
+    "**Imputation:** If these missing values represent first-time orders, we could consider imputing them with a specific value such as 0, or use a special marker like -1 or NaN to clearly indicate that these are first orders.\n",
+    "**Further Analysis:** Cross-check these missing values with other columns, like order_number, to confirm whether they indeed correspond to first orders."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 99,
+   "id": "77ab9dce-5ed0-4cc9-bba5-f9d2e32a595b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##06. Adress Missing values - Create a Flag column to solve for NaN values (Assistance through CF Forum)\n",
+    "df_ords['first_order'] = np.where(np.isnan(df_ords['days_since_prior_order'].values), 'First Order', 'Repeat Customer')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 101,
+   "id": "81e62508-8fef-463f-b085-7e6f4b382b81",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>order_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>order_number</th>\n",
+       "      <th>order_weekday</th>\n",
+       "      <th>order_hour_of_day</th>\n",
+       "      <th>days_since_prior_order</th>\n",
+       "      <th>first_order</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>2539329</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>8</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>First Order</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>2398795</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>3</td>\n",
+       "      <td>7</td>\n",
+       "      <td>15.0</td>\n",
+       "      <td>Repeat Customer</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>473747</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>3</td>\n",
+       "      <td>12</td>\n",
+       "      <td>21.0</td>\n",
+       "      <td>Repeat Customer</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>2254736</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>7</td>\n",
+       "      <td>29.0</td>\n",
+       "      <td>Repeat Customer</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>431534</td>\n",
+       "      <td>1</td>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "      <td>15</td>\n",
+       "      <td>28.0</td>\n",
+       "      <td>Repeat Customer</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   order_id  user_id  order_number  order_weekday  order_hour_of_day  \\\n",
+       "0   2539329        1             1              2                  8   \n",
+       "1   2398795        1             2              3                  7   \n",
+       "2    473747        1             3              3                 12   \n",
+       "3   2254736        1             4              4                  7   \n",
+       "4    431534        1             5              4                 15   \n",
+       "\n",
+       "   days_since_prior_order      first_order  \n",
+       "0                     NaN      First Order  \n",
+       "1                    15.0  Repeat Customer  \n",
+       "2                    21.0  Repeat Customer  \n",
+       "3                    29.0  Repeat Customer  \n",
+       "4                    28.0  Repeat Customer  "
+      ]
+     },
+     "execution_count": 101,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_ords.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 105,
+   "id": "ad1d07e5-9c9c-4632-a674-bfb87c06e66a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Change 'first_order' datatype to 'category'\n",
+    "df_ords['first_order']=df_ords['first_order'].astype('category')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 107,
+   "id": "1a25e249-aa35-4c77-a9d6-37979491b372",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "CategoricalDtype(categories=['First Order', 'Repeat Customer'], ordered=False, categories_dtype=object)"
+      ]
+     },
+     "execution_count": 107,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_ords['first_order'].dtype"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b632a5e8-53f5-45f6-ad19-bffd8907ea9f",
+   "metadata": {},
+   "source": [
+    "#**06. Answer**\n",
+    "\n",
+    "To handle missing values in the days_since_prior_order column, I choose to use a special marker (NaN) to indicate first orders and then created an additional column (first_order) to label these entries explicitly, all with the help of the CF Forum. Here's why i chose this approach:\n",
+    "\n",
+    "-Using NaN as a marker for first orders keeps the original data intact and avoids introducing potentially misleading numerical values like -1, which might be misinterpreted in future analyses.\n",
+    "\n",
+    "-The first_order column clearly distinguishes between first-time customers ('First Order') and returning customers ('Repeat Customer'), providing an easily interpretable label."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 118,
+   "id": "5e18564d-ea4d-46b3-958e-800e572c5bf7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##07. Check for duplicate values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 120,
+   "id": "726ef060-5a6d-49ca-977c-cb8862b99e33",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(3421083, 7)"
+      ]
+     },
+     "execution_count": 120,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_ords.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 132,
+   "id": "6d38a5ed-d4d5-46d9-a0ca-44c85dbecf19",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_ords_dups = df_ords[df_ords.duplicated()]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 134,
+   "id": "7068a791-45b0-47f2-b71f-56be4cfbc238",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>order_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>order_number</th>\n",
+       "      <th>order_weekday</th>\n",
+       "      <th>order_hour_of_day</th>\n",
+       "      <th>days_since_prior_order</th>\n",
+       "      <th>first_order</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "Empty DataFrame\n",
+       "Columns: [order_id, user_id, order_number, order_weekday, order_hour_of_day, days_since_prior_order, first_order]\n",
+       "Index: []"
+      ]
+     },
+     "execution_count": 134,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_ords_dups"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b72514f0-19bf-48c8-b5e8-fdb7befe9358",
+   "metadata": {},
+   "source": [
+    "#**07. Answer**\n",
+    "\n",
+    "**System can´t seem to find any duplicates - can this be correct?**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 141,
+   "id": "e1368b49-e68c-4071-9851-ceb01b01528f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_ords.to_csv(os.path.join(path, '02 Data','Prepared Data', 'orders_checked.csv'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fc30033c-bb50-4231-a371-b70dc8dc2765",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
