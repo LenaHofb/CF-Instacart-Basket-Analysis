@@ -19,14 +19,6 @@ Instacart is an online grocery store that operates through an app. Instacart alr
   + Examine differences in behavior by region, age, family status, and income.
   + Profile customers based on their demographic info and purchasing patterns.
 
-## Data
-The dataset compromises of information on the following parameters:
-+ orders
-+ products
-+ departments
-+ customers
-
-The full details of the data are available [here()]
 
 ## Tools
 For this project, the following python libraries were used
@@ -34,11 +26,7 @@ For this project, the following python libraries were used
 + seaborn - for visualization
 
 ## Executing the code
-The code is available as jupyter notebooks, available under /scripts/.
-
-To launch the notebkook, open terminal an run the command:
-+ importing data: jupyter notebook importData.ipynb
-+ generate Crosstabs: jupyter notebook createCrossTabs.ipynb
+The code is available as jupyter notebooks, available under [Scripts](./Scripts).
 
 
 
